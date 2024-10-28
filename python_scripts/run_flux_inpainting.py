@@ -1,7 +1,6 @@
 import torch
 from diffusers import FluxInpaintPipeline
 from diffusers.utils import load_image
-from peft import PeftModel
 from PIL import PngImagePlugin
 import os
 from datetime import datetime
@@ -10,51 +9,37 @@ from datetime import datetime
 model_id = "black-forest-labs/FLUX.1-schnell"  # FLUX model
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
-guidance_scale = 9  # Adjust guidance scale for better prompt consistency
-num_inference_steps = 35  # Number of diffusion steps
-strength = 0.8  # Strength of inpainting for blending
+guidance_scale = 2  # Adjust guidance scale for better prompt consistency
+num_inference_steps = 30  # Number of diffusion steps
+strength = 0.6  # Strength of inpainting for blending
 
 batch_size = 2  # Images per batch
-num_batches = 4  # Number of batches to generate
+num_batches = 8  # Number of batches to generate
 
 # Seed settings
 generator = torch.Generator(device)
 
-# LoRA parameters (optional)
-use_lora = False  # Enable if you wish to use LoRA
-lora_params = {
-    "alpha": 0.75,
-    "r": 4,
-    "beta": 0.01,
-    "dropout": 0.1
-}
-
 # Load the Flux inpainting pipeline
 pipe = FluxInpaintPipeline.from_pretrained(model_id, torch_dtype=torch.bfloat16)
 pipe.to(device)
-
-# Load the LoRA model if enabled
-if use_lora:
-    pipe.unet = PeftModel.from_pretrained(pipe.unet, model_id, alpha=lora_params["alpha"], r=lora_params["r"], beta=lora_params["beta"], dropout=lora_params["dropout"])
-    pipe.unet.to(device)
 
 # Create a directory with the current date and time for saving images
 output_dir = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
 os.makedirs(output_dir, exist_ok=True)
 
 # Load source image and mask
-img_url = "https://github.com/AlexisAllmnd/Lausanne-Cathedral-Machine-Learning-Project/blob/main/dataset/Results/PIC1/Step%201/PIC1STEP1.png?raw=true"
-mask_url = "https://github.com/AlexisAllmnd/Lausanne-Cathedral-Machine-Learning-Project/blob/main/dataset/Results/PIC1/Step%201/CrownMask.png?raw=true"
+img_url = "https://github.com/AlexisAllmnd/Lausanne-Cathedral-Machine-Learning-Project/blob/main/Results/PIC1/Step%202/CrownedPreProcessed1.2.png?raw=true"
+mask_url = "https://github.com/AlexisAllmnd/Lausanne-Cathedral-Machine-Learning-Project/blob/main/Results/PIC1/Step3/Masks/maskCrowned2.png?raw=true"
 
 source_image = load_image(img_url)
 mask_image = load_image(mask_url)
 
-blurred_mask = pipe.mask_processor.blur(mask_image, blur_factor=50)
+blurred_mask = pipe.mask_processor.blur(mask_image, blur_factor=20)
 
 
 # Define improved inpainting prompt with stone crown detail
 prompt = (
-    "A detailed stone crown of a Gothic statue representing Virgin Mary, finely sculpted "
+    "Generate a serene, 13th-century Gothic Virgin Mary statue head in weathered limestone. Features include closed lips, soft gaze, and smooth lines. Add a simple headdress, subtle wear, and light texturing. Emphasize gentle contours, with balanced lighting to capture a peaceful expression and aged stone detail."
 )
 
 # Function to save images with metadata
