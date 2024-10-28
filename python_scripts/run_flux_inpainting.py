@@ -7,14 +7,14 @@ import os
 from datetime import datetime
 
 # Set the model, LoRA, and device configuration
-model_id = "black-forest-labs/FLUX.1-schnell"
+model_id = "black-forest-labs/FLUX.1-schnell"  # FLUX model
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
-guidance_scale = 5  # Adjust guidance scale for better prompt consistency
-num_inference_steps = 25  # Number of diffusion steps
+guidance_scale = 9  # Adjust guidance scale for better prompt consistency
+num_inference_steps = 35  # Number of diffusion steps
 strength = 0.8  # Strength of inpainting for blending
 
-batch_size = 3  # Images per batch
+batch_size = 2  # Images per batch
 num_batches = 4  # Number of batches to generate
 
 # Seed settings
@@ -43,15 +43,19 @@ output_dir = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
 os.makedirs(output_dir, exist_ok=True)
 
 # Load source image and mask
-img_url = "https://raw.githubusercontent.com/CompVis/latent-diffusion/main/data/inpainting_examples/overture-creations-5sI6fQgYIuo.png"
-mask_url = "https://raw.githubusercontent.com/CompVis/latent-diffusion/main/data/inpainting_examples/overture-creations-5sI6fQgYIuo_mask.png"
+img_url = "https://github.com/AlexisAllmnd/Lausanne-Cathedral-Machine-Learning-Project/blob/main/dataset/Results/PIC1/Step%201/PIC1STEP1.png?raw=true"
+mask_url = "https://github.com/AlexisAllmnd/Lausanne-Cathedral-Machine-Learning-Project/blob/main/dataset/Results/PIC1/Step%201/CrownMask.png?raw=true"
 
 source_image = load_image(img_url)
 mask_image = load_image(mask_url)
 
-# Define inpainting prompt and negative prompt
-prompt = "Face of a yellow cat, high resolution, sitting on a park bench"
-negative_prompt = "low resolution, blurry, distorted face"
+blurred_mask = pipe.mask_processor.blur(mask_image, blur_factor=50)
+
+
+# Define improved inpainting prompt with stone crown detail
+prompt = (
+    "A detailed stone crown of a Gothic statue representing Virgin Mary, finely sculpted "
+)
 
 # Function to save images with metadata
 def save_image_with_metadata(image, image_path, metadata):
@@ -68,14 +72,14 @@ for batch in range(num_batches):
     for i in range(batch_size):
         generator.manual_seed(batch_seed)
 
-        # Run the inpainting with prompt and negative prompt
+        # Run the inpainting with the prompt
         image = pipe(
             prompt=prompt,
             image=source_image,
             mask_image=mask_image,
-            num_inference_steps=num_inference_steps,
-            guidance_scale=guidance_scale,
             strength=strength,
+            guidance_scale=guidance_scale,
+            num_inference_steps=num_inference_steps,
             generator=generator
         ).images[0]
 
