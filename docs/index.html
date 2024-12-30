@@ -1,132 +1,599 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
     <meta charset="utf-8">
-    <title>3D Model Comparison</title>
+    <title>3D Model Comparison - Research Results</title>
     <meta content="width=device-width, initial-scale=1" name="viewport">
+
+    <!-- Import des icônes Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Import de la librairie Model Viewer -->
+    <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+
     <style>
+        /* Base styles and variables for consistent theming */
+        :root {
+            --primary-color: #1e3d59;
+            --secondary-color: #ff6e40;
+            --background-light: #f5f5f5;
+            --text-dark: #2c3e50;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Core styles for better readability and responsiveness */
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             margin: 0;
-            padding: 20px;
-            background: #fff;
+            padding: 0;
+            background: var(--background-light);
+            color: var(--text-dark);
+            line-height: 1.6;
         }
 
+        /* Layout container with maximum width for better readability */
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
+            padding: 2rem;
         }
 
-        h1 {
+        /* Header section styling */
+        .header {
             text-align: center;
-            font-size: 32px;
-            margin-bottom: 40px;
+            padding: 3rem 1rem;
+            background: var(--primary-color);
+            color: white;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin: 0;
+            padding-bottom: 0.5rem;
         }
 
         .authors {
-            text-align: center;
-            margin-bottom: 30px;
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-top: 1rem;
         }
 
-        .external-links {
-            text-align: center;
-            margin: 20px 0 40px 0;
+        /* Navigation menu styling */
+        .nav {
+            background: white;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
-        .btn {
-            display: inline-block;
-            padding: 8px 16px;
-            margin: 0 5px;
-            background: #f5f5f5;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            color: var(--text-dark);
             text-decoration: none;
-            color: #333;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
         }
 
-        .btn:hover {
-            background: #eee;
+        .nav-link:hover {
+            background-color: var(--background-light);
+            color: var(--primary-color);
         }
 
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            margin-bottom: 40px;
-        }
-
-        .model-container {
-            background: #f9f9f9;
-            padding: 20px;
-            border-radius: 8px;
-        }
-
-        .model-title {
-            text-align: center;
-            margin-bottom: 10px;
-            font-weight: bold;
-        }
-
-        model-viewer {
-            width: 100%;
-            height: 400px;
-            background: #f5f5f5;
+        /* Section styling */
+        .section {
+            margin: 4rem 0;
         }
 
         .section-title {
-            margin: 40px 0 20px 0;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #eee;
+            color: var(--primary-color);
+            font-size: 2rem;
+            margin: 2rem 0;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid var(--secondary-color);
         }
 
-        .prompt {
-            color: #666;
-            font-style: italic;
-            margin-bottom: 10px;
+        /* Grid layout for model containers */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        /* Individual model container styling */
+        .model-container {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: transform 0.3s ease;
+        }
+
+        .model-container:hover {
+            transform: translateY(-5px);
+        }
+
+        .model-title {
+            padding: 1rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .model-content {
+            padding: 1rem;
+            aspect-ratio: 4 / 3;
+            position: relative;
+        }
+
+        /* Image styling */
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            cursor: zoom-in;
+            transition: opacity 0.3s ease;
+        }
+
+        img:hover {
+            opacity: 0.9;
+        }
+
+        /* 3D Model viewer styling */
+        model-viewer {
+            width: 100%;
+            height: 100%;
+            background: #fafafa;
+            --poster-color: transparent;
+        }
+
+        /* Modal styling for image zoom */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90vh;
+            margin: auto;
+        }
+
+        .modal-image {
+            max-width: 100%;
+            max-height: 90vh;
+            object-fit: contain;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: background 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        /* Footer styling */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            background: var(--primary-color);
+            color: white;
+            margin-top: 4rem;
+        }
+
+        .footer-content p {
+            margin: 0.25rem 0;
+        }
+
+        /* Responsive design adjustments */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .grid-container {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .nav-container {
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
+            }
+        }
+
+        /* Loading and error styles for 3D viewer */
+        .model-loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            background: #f8f9fa;
+        }
+
+        .model-error {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            background: #fff3f3;
+            padding: 1rem;
+            text-align: center;
+            color: #721c24;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .model-controls {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 5px 10px;
+            border-radius: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .control-button {
+            background: none;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            color: var(--primary-color);
+            transition: color 0.3s ease;
+        }
+
+        .control-button:hover {
+            color: var(--secondary-color);
         }
     </style>
-    <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
 </head>
+
 <body>
-    <div class="container">
-        <h1>3D Model Comparison</h1>
-        
+    <!-- En-tête -->
+    <div class="header">
+        <h1>Research Results: 3D Model Reconstruction</h1>
         <div class="authors">
             Alexis Allemand<br>
-            EPFL
-        </div>
-
-        <div class="external-links">
-            <a href="#" class="btn">
-                <i class="fa fa-file-pdf"></i> Paper
-            </a>
-            <a href="#" class="btn">
-                <i class="fa-brands fa-github"></i> Code
-            </a>
-            <a href="#" class="btn">
-                <i class="fa-solid fa-play"></i> Demo
-            </a>
-        </div>
-
-        <h2 class="section-title">Image-to-3D Generation</h2>
-        <div class="grid-container">
-            <div class="model-container">
-                <div class="model-title">Reference Image</div>
-                <img src="assets/2D/upscaledWOBG1.png" style="width: 100%; height: 400px; object-fit: contain;">
-            </div>
-            <div class="model-container">
-                <div class="model-title">Generated 3D Model</div>
-                <model-viewer 
-                    src="assets/3D/last_result.glb" 
-                    camera-controls
-                    exposure="0.5"
-                    shadow-intensity="2"
-                    camera-orbit="0deg 75deg 110%"
-                    max-camera-orbit="auto auto 200%">
-                </model-viewer>
-            </div>
+            EPFL - Computer Vision Laboratory
         </div>
     </div>
+
+    <!-- Menu de navigation -->
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="#image-processing" class="nav-link">Image Processing Results</a>
+            <a href="#3d-results" class="nav-link">3D Model Results</a>
+        </div>
+    </nav>
+
+    <!-- Contenu principal -->
+    <div class="container">
+        <!-- SECTION 1 : Image Processing Results -->
+        <section id="image-processing" class="section">
+            <h2 class="section-title">Image Processing Results</h2>
+
+            <div class="grid-container">
+                <div class="model-container">
+                    <div class="model-title">Reference Image</div>
+                    <div class="model-content">
+                        <img src="asset/2D/Base/Vierge_A_L_Enfant_Lausanne.png" alt="Reference image" class="zoomable">
+                    </div>
+                </div>
+                <div class="model-container">
+                    <div class="model-title">Source Image</div>
+                    <div class="model-content">
+                        <img src="asset/2D/Base/Pic1.jpg" alt="Source image" class="zoomable">
+                    </div>
+                </div>
+                <div class="model-container">
+                    <div class="model-title">Inpainting Mask</div>
+                    <div class="model-content">
+                        <img src="asset/2D/Mask/MASK1HALF.jpg" alt="Inpainting mask" class="zoomable">
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-container">
+                <div class="model-container">
+                    <div class="model-title">Stable Diffusion Result</div>
+                    <div class="model-content">
+                        <img src="asset/2D/TestResults/stableDiffusion.png" alt="Stable Diffusion result"
+                            class="zoomable">
+                    </div>
+                </div>
+                <div class="model-container">
+                    <div class="model-title">Stable Diffusion XL Result</div>
+                    <div class="model-content">
+                        <img src="asset/2D/TestResults/fooocusDefault.png" alt="Stable Diffusion XL result"
+                            class="zoomable">
+                    </div>
+                </div>
+                <div class="model-container">
+                    <div class="model-title">UniControl Result</div>
+                    <div class="model-content">
+                        <img src="asset/2D/TestResults/UniControl.png" alt="UniControl result" class="zoomable">
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-container">
+                <div class="model-container">
+                    <div class="model-title">Processing Step 1: Base</div>
+                    <div class="model-content">
+                        <img src="asset/2D/Flux/PIC1STEP1.png" alt="Processing step 1" class="zoomable">
+                    </div>
+                </div>
+                <div class="model-container">
+                    <div class="model-title">Processing Step 2: Crown</div>
+                    <div class="model-content">
+                        <img src="asset/2D/Flux/CrownedPreProcessed1.1.png" alt="Processing step 2" class="zoomable">
+                    </div>
+                </div>
+                <div class="model-container">
+                    <div class="model-title">Processing Step 3: Final Details</div>
+                    <div class="model-content">
+                        <img src="asset/2D/Flux/FromCrowned1-6.png" alt="Processing step 3" class="zoomable">
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-container">
+                <div class="model-container">
+                    <div class="model-title">Composite with Cathedral References</div>
+                    <div class="model-content">
+                        <img src="asset/2D/Montage/PIC1MONTEEPARIS.png" alt="Composite result" class="zoomable">
+                    </div>
+                </div>
+                <div class="model-container">
+                    <div class="model-title">Image Refinement Process</div>
+                    <div class="model-content">
+                        <img src="asset/2D/Montage/BonResultat.png" alt="Refinement result" class="zoomable">
+                    </div>
+                </div>
+                <div class="model-container">
+                    <div class="model-title">Final Result</div>
+                    <div class="model-content">
+                        <img src="asset/2D/Montage/FinalResult.png" alt="Final result" class="zoomable">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2 : 3D Model Results -->
+        <section id="3d-results" class="section">
+            <h2 class="section-title">3D Model Results</h2>
+            <div class="grid-container">
+                <div class="model-container">
+                    <div class="model-title">Reference Image</div>
+                    <div class="model-content">
+                        <img src="asset/2D/3D inputs/upscaledWOBG2.png" alt="3D reference" class="zoomable">
+                    </div>
+                </div>
+                <div class="model-container">
+                    <div class="model-title">Generated 3D Model</div>
+                    <model-viewer 
+                        src="asset/3D/3DStudio/last_result.glb"
+                        camera-controls
+                        exposure="0.5"
+                        shadow-intensity="2"
+                        camera-orbit="0deg 75deg 110%"
+                        max-camera-orbit="auto auto 200%">
+                    </model-viewer>
+                </div>
+
+                <div class="model-container">
+                    <div class="model-title">Prism 3D AI Studio Model</div>
+                    <div class="model-content">
+                        <model-viewer 
+                            src="asset/3D/3DStudio/input2prism.glb"
+                            camera-controls 
+                            auto-rotate 
+                            exposure="0.5"
+                            shadow-intensity="2"
+                            camera-orbit="0deg 75deg 110%">
+                        </model-viewer>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-container">
+                <div class="model-container">
+                    <div class="model-title">Clay3D Model</div>
+                    <div class="model-content">
+                        <model-viewer 
+                            src="asset/3D/Clay3D/base_basic_shaded.glb"
+                            camera-controls 
+                            auto-rotate
+                            exposure="0.5" 
+                            shadow-intensity="2" 
+                            camera-orbit="0deg 75deg 110%">
+                        </model-viewer>
+                    </div>
+                </div>
+                <div class="model-container">
+                    <div class="model-title">Craftsman Model</div>
+                    <div class="model-content">
+                        <model-viewer 
+                            src="asset/3D/Craftsman/craftsman better.obj"
+                            camera-controls 
+                            auto-rotate
+                            exposure="0.5" 
+                            shadow-intensity="2" 
+                            camera-orbit="0deg 75deg 110%">
+                        </model-viewer>
+                    </div>
+                </div>
+                <div class="model-container">
+                    <div class="model-title">Trellis Model</div>
+                    <div class="model-content">
+                        <model-viewer 
+                            src="asset/3D/Trellis/Trellis1.glb"
+                            camera-controls 
+                            auto-rotate 
+                            exposure="0.5"
+                            shadow-intensity="2" 
+                            camera-orbit="0deg 75deg 110%">
+                        </model-viewer>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Pied de page -->
+    <footer>
+        <div class="footer-content">
+            <p>© 2024 Alexis Allemand - EPFL Computer Vision Laboratory</p>
+            <p>All rights reserved. Research conducted at École Polytechnique Fédérale de Lausanne</p>
+        </div>
+    </footer>
+
+    <!-- Modal pour zoom des images -->
+    <div class="modal" id="imageModal">
+        <button class="modal-close" aria-label="Close modal">&times;</button>
+        <div class="modal-content">
+            <img class="modal-image" src="" alt="Enlarged image">
+        </div>
+    </div>
+
+    <!-- Script principal -->
+    <script>
+        // Modal functionality for image zoom
+        document.addEventListener('DOMContentLoaded', function () {
+            const modal = document.getElementById('imageModal');
+            const modalImage = document.querySelector('.modal-image');
+            const closeButton = document.querySelector('.modal-close');
+            const zoomableImages = document.querySelectorAll('.zoomable');
+
+            // Ouvrir la modal
+            function openModal(imageSrc) {
+                modal.classList.add('active');
+                modalImage.src = imageSrc;
+                document.body.style.overflow = 'hidden'; // Empêche le scroll en arrière-plan
+            }
+
+            // Fermer la modal
+            function closeModal() {
+                modal.classList.remove('active');
+                document.body.style.overflow = ''; // Restaure le scroll
+                setTimeout(() => {
+                    modalImage.src = ''; // Réinitialise l'image après la transition
+                }, 300);
+            }
+
+            // Ajouter l'événement de clic sur les images zoomables
+            zoomableImages.forEach(img => {
+                img.addEventListener('click', () => {
+                    openModal(img.src);
+                });
+            });
+
+            // Bouton de fermeture
+            closeButton.addEventListener('click', closeModal);
+
+            // Fermer la modal en cliquant en dehors de l'image
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+
+            // Fermer la modal avec la touche Échap
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && modal.classList.contains('active')) {
+                    closeModal();
+                }
+            });
+
+            // Empêcher le scroll (mobile) quand on déplace le doigt sur l'image dans la modal
+            modalImage.addEventListener('touchmove', (e) => {
+                e.preventDefault();
+            });
+
+            // Gestion du chargement et des erreurs pour chaque model-viewer
+            const modelViewers = document.querySelectorAll('model-viewer');
+            modelViewers.forEach(viewer => {
+                viewer.addEventListener('load', () => {
+                    viewer.dismissPoster(); // Retire l'écran de chargement lorsque le modèle est prêt
+                });
+
+                // Gérer les erreurs
+                viewer.addEventListener('error', (error) => {
+                    console.error('Error loading 3D model:', error);
+                    viewer.style.background = '#f8d7da';
+                    viewer.innerHTML = 
+                        '<div style="padding: 20px; text-align: center; color: #721c24;">' +
+                            '<p>Error loading 3D model</p>' +
+                            '<p>Please try again later</p>' +
+                        '</div>';
+                });
+            });
+        });
+    </script>
 </body>
 </html>
