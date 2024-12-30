@@ -144,7 +144,8 @@
             padding: 1rem;
             aspect-ratio: 4 / 3;
             position: relative;
-            transition: all 0.3s ease;
+            transform-origin: center;
+            will-change: transform, width, height;
         }
 
         .model-content.expanded {
@@ -159,6 +160,17 @@
             aspect-ratio: unset;
             padding: 2rem;
             box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+            transition: none;
+        }
+
+        .model-viewer-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            transform: translateZ(0);
+            backface-visibility: hidden;
+            perspective: 1000px;
         }
 
         img {
@@ -235,6 +247,24 @@
             transform: scale(1.1);
         }
 
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .overlay.active {
+            display: block;
+            opacity: 1;
+        }
+
         footer {
             text-align: center;
             padding: 2rem;
@@ -245,21 +275,6 @@
 
         .footer-content p {
             margin: 0.25rem 0;
-        }
-
-        .overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 999;
-        }
-
-        .overlay.active {
-            display: block;
         }
 
         @media (max-width: 768px) {
@@ -400,14 +415,19 @@
                         <button class="expand-button"><i class="fas fa-expand"></i></button>
                     </div>
                     <div class="model-content">
-                        <model-viewer 
-                            src="assets/3D/last_result.glb"
-                            camera-controls 
-                            auto-rotate 
-                            exposure="0.5"
-                            shadow-intensity="2"
-                            camera-orbit="0deg 75deg 110%">
-                        </model-viewer>
+                        <div class="model-viewer-container">
+                            <model-viewer 
+                                src="assets/3D/last_result.glb"
+                                camera-controls 
+                                auto-rotate 
+                                exposure="0.5"
+                                shadow-intensity="2"
+                                camera-orbit="0deg 75deg 110%"
+                                loading="lazy"
+                                draco-decoder-path="https://www.gstatic.com/draco/versioned/decoders/1.4.1/"
+                                performance-mode>
+                            </model-viewer>
+                        </div>
                         <button class="close-button" style="display:none;">&times;</button>
                     </div>
                 </div>
@@ -417,14 +437,19 @@
                         <button class="expand-button"><i class="fas fa-expand"></i></button>
                     </div>
                     <div class="model-content">
-                        <model-viewer 
-                            src="assets/3D/3DStudio/input2prism.glb"
-                            camera-controls 
-                            auto-rotate 
-                            exposure="0.5"
-                            shadow-intensity="2"
-                            camera-orbit="0deg 75deg 110%">
-                        </model-viewer>
+                        <div class="model-viewer-container">
+                            <model-viewer 
+                                src="assets/3D/3DStudio/input2prism.glb"
+                                camera-controls 
+                                auto-rotate 
+                                exposure="0.5"
+                                shadow-intensity="2"
+                                camera-orbit="0deg 75deg 110%"
+                                loading="lazy"
+                                draco-decoder-path="https://www.gstatic.com/draco/versioned/decoders/1.4.1/"
+                                performance-mode>
+                            </model-viewer>
+                        </div>
                         <button class="close-button" style="display:none;">&times;</button>
                     </div>
                 </div>
@@ -437,14 +462,19 @@
                         <button class="expand-button"><i class="fas fa-expand"></i></button>
                     </div>
                     <div class="model-content">
-                        <model-viewer 
-                            src="assets/3D/Clay3D/base_basic_shaded.glb"
-                            camera-controls 
-                            auto-rotate
-                            exposure="0.5" 
-                            shadow-intensity="2" 
-                            camera-orbit="0deg 75deg 110%">
-                        </model-viewer>
+                        <div class="model-viewer-container">
+                            <model-viewer 
+                                src="assets/3D/Clay3D/base_basic_shaded.glb"
+                                camera-controls 
+                                auto-rotate
+                                exposure="0.5" 
+                                shadow-intensity="2" 
+                                camera-orbit="0deg 75deg 110%"
+                                loading="lazy"
+                                draco-decoder-path="https://www.gstatic.com/draco/versioned/decoders/1.4.1/"
+                                performance-mode>
+                            </model-viewer>
+                        </div>
                         <button class="close-button" style="display:none;">&times;</button>
                     </div>
                 </div>
@@ -454,14 +484,19 @@
                         <button class="expand-button"><i class="fas fa-expand"></i></button>
                     </div>
                     <div class="model-content">
-                        <model-viewer 
-                            src="assets/3D/Craftsman/craftsman better.obj"
-                            camera-controls 
-                            auto-rotate
-                            exposure="0.5" 
-                            shadow-intensity="2" 
-                            camera-orbit="0deg 75deg 110%">
-                        </model-viewer>
+                        <div class="model-viewer-container">
+                            <model-viewer 
+                                src="assets/3D/Craftsman/craftsman better.obj"
+                                camera-controls 
+                                auto-rotate
+                                exposure="0.5" 
+                                shadow-intensity="2" 
+                                camera-orbit="0deg 75deg 110%"
+                                loading="lazy"
+                                draco-decoder-path="https://www.gstatic.com/draco/versioned/decoders/1.4.1/"
+                                performance-mode>
+                            </model-viewer>
+                        </div>
                         <button class="close-button" style="display:none;">&times;</button>
                     </div>
                 </div>
@@ -471,14 +506,19 @@
                         <button class="expand-button"><i class="fas fa-expand"></i></button>
                     </div>
                     <div class="model-content">
-                        <model-viewer 
-                            src="assets/3D/Trellis/Trellis1.glb"
-                            camera-controls 
-                            auto-rotate 
-                            exposure="0.5"
-                            shadow-intensity="2" 
-                            camera-orbit="0deg 75deg 110%">
-                        </model-viewer>
+                        <div class="model-viewer-container">
+                            <model-viewer 
+                                src="assets/3D/Trellis/Trellis1.glb"
+                                camera-controls 
+                                auto-rotate 
+                                exposure="0.5"
+                                shadow-intensity="2" 
+                                camera-orbit="0deg 75deg 110%"
+                                loading="lazy"
+                                draco-decoder-path="https://www.gstatic.com/draco/versioned/decoders/1.4.1/"
+                                performance-mode>
+                            </model-viewer>
+                        </div>
                         <button class="close-button" style="display:none;">&times;</button>
                     </div>
                 </div>
@@ -494,7 +534,7 @@
     </footer>
 
     <div class="modal" id="imageModal">
-        <button class="modal-close">&times;</button>
+        <button class="close-button">&times;</button>
         <div class="modal-content">
             <img class="modal-image" src="" alt="Enlarged image">
         </div>
@@ -506,16 +546,17 @@
         document.addEventListener('DOMContentLoaded', function() {
             const modal = document.getElementById('imageModal');
             const modalImage = document.querySelector('.modal-image');
-            const closeButton = document.querySelector('.modal-close');
+            const closeButtons = document.querySelectorAll('.close-button');
             const zoomableImages = document.querySelectorAll('.zoomable');
             const overlay = document.querySelector('.overlay');
             const expandButtons = document.querySelectorAll('.expand-button');
-            const closeButtons = document.querySelectorAll('.close-button');
 
             function openModal(imageSrc) {
-                modal.classList.add('active');
-                modalImage.src = imageSrc;
-                document.body.style.overflow = 'hidden';
+                requestAnimationFrame(() => {
+                    modal.classList.add('active');
+                    modalImage.src = imageSrc;
+                    document.body.style.overflow = 'hidden';
+                });
             }
 
             function closeModal() {
@@ -525,40 +566,62 @@
             }
 
             function expandModel(modelContent) {
-                modelContent.classList.add('expanded');
-                overlay.classList.add('active');
-                modelContent.querySelector('.close-button').style.display = 'flex';
-                document.body.style.overflow = 'hidden';
+                const viewer = modelContent.querySelector('model-viewer');
+                viewer.autoRotate = false;
+                
+                requestAnimationFrame(() => {
+                    modelContent.classList.add('expanded');
+                    overlay.classList.add('active');
+                    modelContent.querySelector('.close-button').style.display = 'flex';
+                    document.body.style.overflow = 'hidden';
+                    
+                    setTimeout(() => {
+                        viewer.autoRotate = true;
+                    }, 300);
+                });
             }
 
             function collapseModel(modelContent) {
-                modelContent.classList.remove('expanded');
-                overlay.classList.remove('active');
-                modelContent.querySelector('.close-button').style.display = 'none';
-                document.body.style.overflow = '';
+                const viewer = modelContent.querySelector('model-viewer');
+                viewer.autoRotate = false;
+                
+                requestAnimationFrame(() => {
+                    modelContent.classList.remove('expanded');
+                    overlay.classList.remove('active');
+                    modelContent.querySelector('.close-button').style.display = 'none';
+                    document.body.style.overflow = '';
+                    
+                    setTimeout(() => {
+                        viewer.autoRotate = true;
+                    }, 300);
+                });
             }
 
             zoomableImages.forEach(img => {
-                img.addEventListener('click', () => openModal(img.src));
+                img.addEventListener('click', () => openModal(img.src), { passive: true });
             });
 
             expandButtons.forEach(button => {
                 button.addEventListener('click', (e) => {
                     const modelContent = e.target.closest('.model-container').querySelector('.model-content');
-                    expandModel(modelContent);
-                });
+                    if (!modelContent.classList.contains('expanded')) {
+                        expandModel(modelContent);
+                    }
+                }, { passive: true });
             });
 
             closeButtons.forEach(button => {
                 button.addEventListener('click', (e) => {
-                    const modelContent = e.target.closest('.model-content');
-                    collapseModel(modelContent);
+                    const modalEl = e.target.closest('.modal');
+                    if (modalEl) {
+                        closeModal();
+                    } else {
+                        const modelContent = e.target.closest('.model-content');
+                        if (modelContent) {
+                            collapseModel(modelContent);
+                        }
+                    }
                 });
-            });
-
-            closeButton.addEventListener('click', closeModal);
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) closeModal();
             });
 
             overlay.addEventListener('click', () => {
@@ -574,20 +637,63 @@
                 }
             });
 
-            modalImage.addEventListener('touchmove', (e) => e.preventDefault());
+            const observerOptions = {
+                root: null,
+                rootMargin: '50px',
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    const viewer = entry.target;
+                    if (entry.isIntersecting) {
+                        if (!viewer.hasAttribute('data-loaded')) {
+                            viewer.dismissPoster();
+                            viewer.setAttribute('data-loaded', 'true');
+                            viewer.style.opacity = '1';
+                        }
+                        
+                        if (!viewer.autoRotate && !viewer.closest('.model-content').classList.contains('expanded')) {
+                            setTimeout(() => {
+                                viewer.autoRotate = true;
+                            }, 100);
+                        }
+                    } else {
+                        if (!viewer.closest('.model-content').classList.contains('expanded')) {
+                            viewer.autoRotate = false;
+                            viewer.style.opacity = '0.6';
+                        }
+                    }
+                });
+            }, observerOptions);
 
             const modelViewers = document.querySelectorAll('model-viewer');
             modelViewers.forEach(viewer => {
-                viewer.addEventListener('load', () => viewer.dismissPoster());
+                observer.observe(viewer);
+                
+                viewer.addEventListener('load', () => {
+                    viewer.style.opacity = '1';
+                    viewer.dismissPoster();
+                    viewer.removeAttribute('loading');
+                }, { passive: true });
+
                 viewer.addEventListener('error', (error) => {
                     console.error('Error loading 3D model:', error);
                     viewer.style.background = '#f8d7da';
-                    viewer.innerHTML = '<div style="padding: 20px; text-align: center; color: #721c24;"><p>Error loading 3D model</p><p>Please try again later</p></div>';
+                    viewer.innerHTML = `
+                        <div style="padding: 20px; text-align: center; color: #721c24;">
+                            <p>Error loading 3D model</p>
+                            <p>Please try again later</p>
+                        </div>
+                    `;
                 });
+
+                viewer.style.opacity = '0';
+                viewer.style.transition = 'opacity 0.3s ease-in-out';
             });
+
+            modalImage.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
         });
     </script>
 </body>
 </html>
-
-            
