@@ -1,105 +1,276 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>3D Model Viewer</title>
     <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body, html {
+        :root {
+            --primary-color: #1e3d59;
+            --secondary-color: #ff6e40;
+            --background-light: #f5f5f5;
+            --text-dark: #2c3e50;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        body,
+        html {
             margin: 0;
             padding: 0;
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background: #f5f5f5;
+            background: var(--background-light);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            color: var(--text-dark);
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            text-align: center;
         }
 
         .viewer-container {
             width: 100%;
             height: 100vh;
             position: relative;
+            padding-top: 60px;
+            box-sizing: border-box;
         }
 
         model-viewer {
             width: 100%;
             height: 100%;
             background: #fafafa;
+            --progress-bar-color: var(--secondary-color);
+            --progress-bar-height: 3px;
+        }
+
+        .controls-container {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 1rem;
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+            z-index: 1000;
+        }
+
+        .control-button {
+            background: var(--primary-color);
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        .control-button:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
         }
 
         .close-btn {
             position: fixed;
-            top: 20px;
+            top: 15px;
             right: 20px;
-            background: white;
+            background: var(--secondary-color);
             border: none;
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            z-index: 1000;
-            transition: transform 0.3s ease;
+            font-size: 1.2rem;
+            color: white;
+            box-shadow: var(--card-shadow);
+            z-index: 1001;
+            transition: all 0.3s ease;
         }
 
         .close-btn:hover {
             transform: scale(1.1);
+            background: #ff8c69;
         }
 
         .model-info {
             position: fixed;
-            top: 20px;
+            bottom: 20px;
             left: 20px;
             background: white;
-            padding: 10px 20px;
+            padding: 0.75rem 1rem;
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: var(--card-shadow);
             z-index: 1000;
+            font-size: 0.9rem;
+            color: var(--text-dark);
+            max-width: 300px;
+        }
+
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--background-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            transition: opacity 0.3s ease;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--primary-color);
+            border-top-color: var(--secondary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .controls-container {
+                flex-wrap: wrap;
+                justify-content: center;
+                width: 90%;
+                max-width: 400px;
+            }
+
+            .model-info {
+                bottom: auto;
+                top: 80px;
+            }
         }
     </style>
 </head>
+
 <body>
+    <div class="header">
+        <h1 id="model-title">Loading Model...</h1>
+        <button class="close-btn" onclick="window.close()">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
     <div class="viewer-container">
-        <div class="model-info">
-            <h2 id="model-title"></h2>
-        </div>
-        <button class="close-btn" onclick="window.close()">&times;</button>
-        <model-viewer 
-            id="viewer"
-            camera-controls 
-            auto-rotate 
-            exposure="0.5"
-            shadow-intensity="2"
-            camera-orbit="0deg 75deg 110%"
-            draco-decoder-path="https://www.gstatic.com/draco/versioned/decoders/1.4.1/"
+        <model-viewer id="viewer" camera-controls auto-rotate exposure="0.5" shadow-intensity="2"
+            camera-orbit="0deg 75deg 110%" draco-decoder-path="https://www.gstatic.com/draco/versioned/decoders/1.4.1/"
             performance-mode>
         </model-viewer>
     </div>
 
+    <div class="controls-container">
+        <button class="control-button" id="resetButton">
+            <i class="fas fa-sync-alt"></i> Reset View
+        </button>
+        <button class="control-button" id="autoRotateButton">
+            <i class="fas fa-redo"></i> Toggle Rotation
+        </button>
+        <button class="control-button" id="fullscreenButton">
+            <i class="fas fa-expand"></i> Fullscreen
+        </button>
+    </div>
+
+    <div class="loading-screen">
+        <div class="loading-spinner"></div>
+    </div>
+
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const urlParams = new URLSearchParams(window.location.search);
             const modelSrc = urlParams.get('src');
             const modelTitle = urlParams.get('title');
-            
+
             const viewer = document.getElementById('viewer');
             const titleElement = document.getElementById('model-title');
-            
+            const loadingScreen = document.querySelector('.loading-screen');
+            const autoRotateButton = document.getElementById('autoRotateButton');
+            const resetButton = document.getElementById('resetButton');
+            const fullscreenButton = document.getElementById('fullscreenButton');
+
             if (modelSrc) {
                 viewer.src = decodeURIComponent(modelSrc);
                 titleElement.textContent = decodeURIComponent(modelTitle || '3D Model');
             }
-            
+
+            viewer.addEventListener('load', () => {
+                loadingScreen.style.opacity = '0';
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                }, 300);
+            });
+
+            autoRotateButton.addEventListener('click', () => {
+                viewer.autoRotate = !viewer.autoRotate;
+                autoRotateButton.innerHTML = viewer.autoRotate ?
+                    '<i class="fas fa-pause"></i> Stop Rotation' :
+                    '<i class="fas fa-redo"></i> Start Rotation';
+            });
+
+            resetButton.addEventListener('click', () => {
+                viewer.cameraOrbit = "0deg 75deg 110%";
+                viewer.cameraTarget = "0m 0m 0m";
+                viewer.fieldOfView = "30deg";
+            });
+
+            fullscreenButton.addEventListener('click', () => {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen();
+                    fullscreenButton.innerHTML = '<i class="fas fa-compress"></i> Exit Fullscreen';
+                } else {
+                    document.exitFullscreen();
+                    fullscreenButton.innerHTML = '<i class="fas fa-expand"></i> Fullscreen';
+                }
+            });
+
             document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape') {
+                if (e.key === 'Escape' && !document.fullscreenElement) {
                     window.close();
+                }
+            });
+
+            document.addEventListener('fullscreenchange', () => {
+                if (!document.fullscreenElement) {
+                    fullscreenButton.innerHTML = '<i class="fas fa-expand"></i> Fullscreen';
                 }
             });
         });
     </script>
 </body>
+
 </html>
