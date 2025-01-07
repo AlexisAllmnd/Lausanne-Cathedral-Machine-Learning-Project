@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <title>3D Model Comparison - Research Results</title>
@@ -278,14 +279,24 @@
         }
 
         @media (max-width: 768px) {
-            .container { padding: 1rem; }
-            .grid-container { grid-template-columns: 1fr; }
-            .header h1 { font-size: 2rem; }
+            .container {
+                padding: 1rem;
+            }
+
+            .grid-container {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
             .nav-container {
                 flex-direction: column;
                 align-items: center;
                 gap: 1rem;
             }
+
             .model-content.expanded {
                 width: 100vw;
                 height: 100vh;
@@ -340,13 +351,15 @@
                 <div class="model-container">
                     <div class="model-title">Stable Diffusion Result</div>
                     <div class="model-content">
-                        <img src="assets/2D/TestResults/stableDiffusion.png" alt="Stable Diffusion result" class="zoomable">
+                        <img src="assets/2D/TestResults/stableDiffusion.png" alt="Stable Diffusion result"
+                            class="zoomable">
                     </div>
                 </div>
                 <div class="model-container">
                     <div class="model-title">Stable Diffusion XL Result</div>
                     <div class="model-content">
-                        <img src="assets/2D/TestResults/fooocusDefault.png" alt="Stable Diffusion XL result" class="zoomable">
+                        <img src="assets/2D/TestResults/fooocusDefault.png" alt="Stable Diffusion XL result"
+                            class="zoomable">
                     </div>
                 </div>
                 <div class="model-container">
@@ -416,14 +429,8 @@
                     </div>
                     <div class="model-content">
                         <div class="model-viewer-container">
-                            <model-viewer 
-                                src="assets/3D/last_result.glb"
-                                camera-controls 
-                                auto-rotate 
-                                exposure="0.5"
-                                shadow-intensity="2"
-                                camera-orbit="0deg 75deg 110%"
-                                loading="lazy"
+                            <model-viewer src="assets/3D/last_result.glb" camera-controls auto-rotate exposure="0.5"
+                                shadow-intensity="2" camera-orbit="0deg 75deg 110%" loading="lazy"
                                 draco-decoder-path="https://www.gstatic.com/draco/versioned/decoders/1.4.1/"
                                 performance-mode>
                             </model-viewer>
@@ -438,14 +445,8 @@
                     </div>
                     <div class="model-content">
                         <div class="model-viewer-container">
-                            <model-viewer 
-                                src="assets/3D/3DStudio/input2prism.glb"
-                                camera-controls 
-                                auto-rotate 
-                                exposure="0.5"
-                                shadow-intensity="2"
-                                camera-orbit="0deg 75deg 110%"
-                                loading="lazy"
+                            <model-viewer src="assets/3D/3DStudio/input2prism.glb" camera-controls auto-rotate
+                                exposure="0.5" shadow-intensity="2" camera-orbit="0deg 75deg 110%" loading="lazy"
                                 draco-decoder-path="https://www.gstatic.com/draco/versioned/decoders/1.4.1/"
                                 performance-mode>
                             </model-viewer>
@@ -463,14 +464,8 @@
                     </div>
                     <div class="model-content">
                         <div class="model-viewer-container">
-                            <model-viewer 
-                                src="assets/3D/Clay3D/base_basic_shaded.glb"
-                                camera-controls 
-                                auto-rotate
-                                exposure="0.5" 
-                                shadow-intensity="2" 
-                                camera-orbit="0deg 75deg 110%"
-                                loading="lazy"
+                            <model-viewer src="assets/3D/Clay3D/base_basic_shaded.glb" camera-controls auto-rotate
+                                exposure="0.5" shadow-intensity="2" camera-orbit="0deg 75deg 110%" loading="lazy"
                                 draco-decoder-path="https://www.gstatic.com/draco/versioned/decoders/1.4.1/"
                                 performance-mode>
                             </model-viewer>
@@ -485,14 +480,8 @@
                     </div>
                     <div class="model-content">
                         <div class="model-viewer-container">
-                            <model-viewer 
-                                src="assets/3D/Craftsman/craftsman_best.glb"
-                                camera-controls 
-                                auto-rotate
-                                exposure="0.5" 
-                                shadow-intensity="2" 
-                                camera-orbit="0deg 75deg 110%"
-                                loading="lazy"
+                            <model-viewer src="assets/3D/Craftsman/craftsman_best.glb" camera-controls auto-rotate
+                                exposure="0.5" shadow-intensity="2" camera-orbit="0deg 75deg 110%" loading="lazy"
                                 draco-decoder-path="https://www.gstatic.com/draco/versioned/decoders/1.4.1/"
                                 performance-mode>
                             </model-viewer>
@@ -507,14 +496,8 @@
                     </div>
                     <div class="model-content">
                         <div class="model-viewer-container">
-                            <model-viewer 
-                                src="assets/3D/Trellis/Trellis1.glb"
-                                camera-controls 
-                                auto-rotate 
-                                exposure="0.5"
-                                shadow-intensity="2" 
-                                camera-orbit="0deg 75deg 110%"
-                                loading="lazy"
+                            <model-viewer src="assets/3D/Trellis/Trellis1.glb" camera-controls auto-rotate
+                                exposure="0.5" shadow-intensity="2" camera-orbit="0deg 75deg 110%" loading="lazy"
                                 draco-decoder-path="https://www.gstatic.com/draco/versioned/decoders/1.4.1/"
                                 performance-mode>
                             </model-viewer>
@@ -550,7 +533,31 @@
             const zoomableImages = document.querySelectorAll('.zoomable');
             const overlay = document.querySelector('.overlay');
             const expandButtons = document.querySelectorAll('.expand-button');
-
+            const allModelViewers = document.querySelectorAll('model-viewer');
+    
+            // New expandModel function for 3D models
+            function expandModel(modelContent) {
+                const viewer = modelContent.querySelector('model-viewer');
+                const modelSrc = viewer.src;
+                const modelTitle = modelContent.closest('.model-container').querySelector('.model-title').textContent.trim();
+                
+                // Calculate the window size (90% of screen size)
+                const width = Math.floor(window.screen.width * 0.9);
+                const height = Math.floor(window.screen.height * 0.9);
+                
+                // Calculate position to center the window
+                const left = Math.floor((window.screen.width - width) / 2);
+                const top = Math.floor((window.screen.height - height) / 2);
+                
+                // Open the viewer in a new window
+                window.open(
+                    `viewer.html?src=${encodeURIComponent(modelSrc)}&title=${encodeURIComponent(modelTitle)}`,
+                    '_blank',
+                    `width=${width},height=${height},top=${top},left=${left}`
+                );
+            }
+    
+            // Image modal functions
             function openModal(imageSrc) {
                 requestAnimationFrame(() => {
                     modal.classList.add('active');
@@ -558,91 +565,47 @@
                     document.body.style.overflow = 'hidden';
                 });
             }
-
+    
             function closeModal() {
                 modal.classList.remove('active');
                 document.body.style.overflow = '';
                 setTimeout(() => modalImage.src = '', 300);
             }
-
-            function expandModel(modelContent) {
-                const viewer = modelContent.querySelector('model-viewer');
-                viewer.autoRotate = false;
-                
-                requestAnimationFrame(() => {
-                    modelContent.classList.add('expanded');
-                    overlay.classList.add('active');
-                    modelContent.querySelector('.close-button').style.display = 'flex';
-                    document.body.style.overflow = 'hidden';
-                    
-                    setTimeout(() => {
-                        viewer.autoRotate = true;
-                    }, 300);
-                });
-            }
-
-            function collapseModel(modelContent) {
-                const viewer = modelContent.querySelector('model-viewer');
-                viewer.autoRotate = false;
-                
-                requestAnimationFrame(() => {
-                    modelContent.classList.remove('expanded');
-                    overlay.classList.remove('active');
-                    modelContent.querySelector('.close-button').style.display = 'none';
-                    document.body.style.overflow = '';
-                    
-                    setTimeout(() => {
-                        viewer.autoRotate = true;
-                    }, 300);
-                });
-            }
-
+    
+            // Event listeners
             zoomableImages.forEach(img => {
                 img.addEventListener('click', () => openModal(img.src), { passive: true });
             });
-
+    
             expandButtons.forEach(button => {
                 button.addEventListener('click', (e) => {
                     const modelContent = e.target.closest('.model-container').querySelector('.model-content');
-                    if (!modelContent.classList.contains('expanded')) {
-                        expandModel(modelContent);
-                    }
+                    expandModel(modelContent);
                 }, { passive: true });
             });
-
+    
             closeButtons.forEach(button => {
                 button.addEventListener('click', (e) => {
                     const modalEl = e.target.closest('.modal');
                     if (modalEl) {
                         closeModal();
-                    } else {
-                        const modelContent = e.target.closest('.model-content');
-                        if (modelContent) {
-                            collapseModel(modelContent);
-                        }
                     }
                 });
             });
-
-            overlay.addEventListener('click', () => {
-                const expandedContent = document.querySelector('.model-content.expanded');
-                if (expandedContent) collapseModel(expandedContent);
-            });
-
+    
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape') {
                     if (modal.classList.contains('active')) closeModal();
-                    const expandedContent = document.querySelector('.model-content.expanded');
-                    if (expandedContent) collapseModel(expandedContent);
                 }
             });
-
+    
+            // Model viewer initialization
             const observerOptions = {
                 root: null,
                 rootMargin: '50px',
                 threshold: 0.1
             };
-
+    
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     const viewer = entry.target;
@@ -653,22 +616,19 @@
                             viewer.style.opacity = '1';
                         }
                         
-                        if (!viewer.autoRotate && !viewer.closest('.model-content').classList.contains('expanded')) {
+                        if (!viewer.autoRotate) {
                             setTimeout(() => {
                                 viewer.autoRotate = true;
                             }, 100);
                         }
                     } else {
-                        if (!viewer.closest('.model-content').classList.contains('expanded')) {
-                            viewer.autoRotate = false;
-                            viewer.style.opacity = '0.6';
-                        }
+                        viewer.autoRotate = false;
+                        viewer.style.opacity = '0.6';
                     }
                 });
             }, observerOptions);
-
-            const modelViewers = document.querySelectorAll('model-viewer');
-            modelViewers.forEach(viewer => {
+    
+            allModelViewers.forEach(viewer => {
                 observer.observe(viewer);
                 
                 viewer.addEventListener('load', () => {
@@ -676,7 +636,7 @@
                     viewer.dismissPoster();
                     viewer.removeAttribute('loading');
                 }, { passive: true });
-
+    
                 viewer.addEventListener('error', (error) => {
                     console.error('Error loading 3D model:', error);
                     viewer.style.background = '#f8d7da';
@@ -687,13 +647,14 @@
                         </div>
                     `;
                 });
-
+    
                 viewer.style.opacity = '0';
                 viewer.style.transition = 'opacity 0.3s ease-in-out';
             });
-
+    
             modalImage.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
         });
+        
     </script>
 </body>
 </html>
