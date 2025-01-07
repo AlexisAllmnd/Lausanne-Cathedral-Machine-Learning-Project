@@ -1,56 +1,195 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Model Comparison</title>
+    <meta charset="utf-8">
+    <title>3D Model Comparison - Research Results</title>
+    <meta content="width=device-width, initial-scale=1" name="viewport">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+
     <style>
+        :root {
+            --primary-color: #1e3d59;
+            --secondary-color: #ff6e40;
+            --background-light: #f5f5f5;
+            --text-dark: #2c3e50;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
         body {
-            font-family: 'Segoe UI', sans-serif;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             margin: 0;
             padding: 0;
-            background: #f5f5f5;
-            color: #333;
+            background: var(--background-light);
+            color: var(--text-dark);
+            line-height: 1.6;
         }
 
         .container {
-            max-width: 1200px;
-            margin: 20px auto;
-            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
         }
 
-        h1 {
+        .header {
             text-align: center;
-            margin-bottom: 30px;
+            padding: 3rem 1rem;
+            background: var(--primary-color);
+            color: white;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
-        .grid {
+        .header h1 {
+            font-size: 2.5rem;
+            margin: 0;
+            padding-bottom: 0.5rem;
+        }
+
+        .authors {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-top: 1rem;
+        }
+
+        .nav {
+            background: white;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            color: var(--text-dark);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+
+        .nav-link:hover {
+            background-color: var(--background-light);
+            color: var(--primary-color);
+        }
+
+        .section {
+            margin: 4rem 0;
+        }
+
+        .section-title {
+            color: var(--primary-color);
+            font-size: 2rem;
+            margin: 2rem 0;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid var(--secondary-color);
+        }
+
+        .grid-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
         }
 
         .model-container {
-            background: #fff;
-            padding: 15px;
+            background: white;
             border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            text-align: center;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: transform 0.3s ease;
+        }
+
+        .model-container:hover {
+            transform: translateY(-5px);
+        }
+
+        .model-title {
+            padding: 1rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            background: var(--primary-color);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .expand-button {
+            background: var(--secondary-color);
+            border: none;
+            color: white;
+            padding: 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .expand-button:hover {
+            opacity: 0.9;
+            transform: scale(1.1);
+        }
+
+        .model-content {
+            padding: 1rem;
+            aspect-ratio: 4 / 3;
+            position: relative;
+            transform-origin: center;
+            will-change: transform, width, height;
+        }
+
+        .model-content.expanded {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90vw;
+            height: 90vh;
+            z-index: 1000;
+            background: white;
+            aspect-ratio: unset;
+            padding: 2rem;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+            transition: none;
+        }
+
+        .model-viewer-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            transform: translateZ(0);
+            backface-visibility: hidden;
+            perspective: 1000px;
+        }
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            cursor: zoom-in;
+            transition: opacity 0.3s ease;
+        }
+
+        img:hover {
+            opacity: 0.9;
         }
 
         model-viewer {
             width: 100%;
-            height: 300px;
-            background: #eaeaea;
-        }
-
-        img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 5px;
-            cursor: pointer;
+            height: 100%;
+            background: #fafafa;
+            --poster-color: transparent;
         }
 
         .modal {
@@ -60,85 +199,500 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            justify-content: center;
-            align-items: center;
+            background: rgba(0, 0, 0, 0.9);
             z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
         .modal.active {
             display: flex;
+            opacity: 1;
         }
 
-        .modal img {
+        .modal-content {
+            position: relative;
             max-width: 90%;
-            max-height: 90%;
+            max-height: 90vh;
+            margin: auto;
         }
 
-        .modal .close {
+        .modal-image {
+            max-width: 100%;
+            max-height: 90vh;
+            object-fit: contain;
+        }
+
+        .close-button {
             position: absolute;
-            top: 20px;
-            right: 20px;
-            font-size: 24px;
-            color: white;
+            top: 1rem;
+            right: 1rem;
+            background: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+            z-index: 1001;
+        }
+
+        .close-button:hover {
+            background: var(--secondary-color);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .overlay.active {
+            display: block;
+            opacity: 1;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            background: var(--primary-color);
+            color: white;
+            margin-top: 4rem;
+        }
+
+        .footer-content p {
+            margin: 0.25rem 0;
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            .grid-container { grid-template-columns: 1fr; }
+            .header h1 { font-size: 2rem; }
+            .nav-container {
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
+            }
+            .model-content.expanded {
+                width: 100vw;
+                height: 100vh;
+                padding: 1rem;
+            }
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <h1>3D Model Comparison</h1>
-        <div class="grid">
-            <!-- 2D Image Example -->
-            <div class="model-container">
-                <h2>Reference Image</h2>
-                <img src="assets/2D/upscaledWOBG1.png" alt="Reference Image">
-            </div>
 
-            <!-- 3D Model Viewer Example -->
-            <div class="model-container">
-                <h2>Generated 3D Model</h2>
-                <model-viewer 
-                    src="assets/3D/last_result.glb" 
-                    camera-controls 
-                    auto-rotate 
-                    shadow-intensity="1" 
-                    exposure="0.8" 
-                    ar 
-                    fullscreen>
-                </model-viewer>
-            </div>
+<body>
+    <div class="header">
+        <h1>Research Results: 3D Model Reconstruction</h1>
+        <div class="authors">
+            Alexis Allemand<br>
+            EPFL - Computer Vision Laboratory
         </div>
     </div>
 
-    <!-- Modal for Images -->
-    <div class="modal" id="imageModal">
-        <span class="close">&times;</span>
-        <img src="" alt="Enlarged">
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="#image-processing" class="nav-link">Image Processing Results</a>
+            <a href="#3d-results" class="nav-link">3D Model Results</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <section id="image-processing" class="section">
+            <h2 class="section-title">Image Processing Results</h2>
+
+            <div class="grid-container">
+                <div class="model-container">
+                    <div class="model-title">Reference Image</div>
+                    <div class="model-content">
+                        <img src="assets/2D/Base/Vierge_A_L_Enfant_Lausanne.png" alt="Reference image" class="zoomable">
+                    </div>
+                </div>
+                <div class="model-container">
+                    <div class="model-title">Source Image</div>
+                    <div class="model-content">
+                        <img src="assets/2D/Base/Pic1.jpg" alt="Source image" class="zoomable">
+                    </div>
+                </div>
+                <div class="model-container">
+                    <div class="model-title">Inpainting Mask</div>
+                    <div class="model-content">
+                        <img src="assets/2D/Mask/MASK1HALF.jpg" alt="Inpainting mask" class="zoomable">
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-container">
+                <div class="model-container">
+                    <div class="model-title">Stable Diffusion Result</div>
+                    <div class="model-content">
+                        <img src="assets/2D/TestResults/stableDiffusion.png" alt="Stable Diffusion result" class="zoomable">
+                    </div>
+                </div>
+                <div class="model-container">
+                    <div class="model-title">Stable Diffusion XL Result</div>
+                    <div class="model-content">
+                        <img src="assets/2D/TestResults/fooocusDefault.png" alt="Stable Diffusion XL result" class="zoomable">
+                    </div>
+                </div>
+                <div class="model-container">
+                    <div class="model-title">UniControl Result</div>
+                    <div class="model-content">
+                        <img src="assets/2D/TestResults/UniControl.png" alt="UniControl result" class="zoomable">
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-container">
+                <div class="model-container">
+                    <div class="model-title">Processing Step 1: Base</div>
+                    <div class="model-content">
+                        <img src="assets/2D/Flux/PIC1STEP1.png" alt="Processing step 1" class="zoomable">
+                    </div>
+                </div>
+                <div class="model-container">
+                    <div class="model-title">Processing Step 2: Crown</div>
+                    <div class="model-content">
+                        <img src="assets/2D/Flux/CrownedPreProcessed1.1.png" alt="Processing step 2" class="zoomable">
+                    </div>
+                </div>
+                <div class="model-container">
+                    <div class="model-title">Processing Step 3: Final Details</div>
+                    <div class="model-content">
+                        <img src="assets/2D/Flux/FromCrowned1-6.png" alt="Processing step 3" class="zoomable">
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-container">
+                <div class="model-container">
+                    <div class="model-title">Composite with Cathedral References</div>
+                    <div class="model-content">
+                        <img src="assets/2D/Montage/PIC1MONTEEPARIS.png" alt="Composite result" class="zoomable">
+                    </div>
+                </div>
+                <div class="model-container">
+                    <div class="model-title">Image Refinement Process</div>
+                    <div class="model-content">
+                        <img src="assets/2D/Montage/BonResultat.png" alt="Refinement result" class="zoomable">
+                    </div>
+                </div>
+                <div class="model-container">
+                    <div class="model-title">Final Result</div>
+                    <div class="model-content">
+                        <img src="assets/2D/Montage/FinalResult.png" alt="Final result" class="zoomable">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="3d-results" class="section">
+            <h2 class="section-title">3D Model Results</h2>
+            <div class="grid-container">
+                <div class="model-container">
+                    <div class="model-title">Reference Image</div>
+                    <div class="model-content">
+                        <img src="assets/2D/3D inputs/upscaledWOBG2.png" alt="3D reference" class="zoomable">
+                    </div>
+                </div>
+                <div class="model-container">
+                    <div class="model-title">
+                        Generated 3D Model
+                        <button class="expand-button"><i class="fas fa-expand"></i></button>
+                    </div>
+                    <div class="model-content">
+                        <div class="model-viewer-container">
+                            <model-viewer 
+                                src="assets/3D/last_result.glb"
+                                camera-controls 
+                                auto-rotate 
+                                exposure="0.5"
+                                shadow-intensity="2"
+                                camera-orbit="0deg 75deg 110%"
+                                loading="lazy"
+                                draco-decoder-path="https://www.gstatic.com/draco/versioned/decoders/1.4.1/"
+                                performance-mode>
+                            </model-viewer>
+                        </div>
+                        <button class="close-button" style="display:none;">&times;</button>
+                    </div>
+                </div>
+                <div class="model-container">
+                    <div class="model-title">
+                        Prism 3D AI Studio Model
+                        <button class="expand-button"><i class="fas fa-expand"></i></button>
+                    </div>
+                    <div class="model-content">
+                        <div class="model-viewer-container">
+                            <model-viewer 
+                                src="assets/3D/3DStudio/input2prism.glb"
+                                camera-controls 
+                                auto-rotate 
+                                exposure="0.5"
+                                shadow-intensity="2"
+                                camera-orbit="0deg 75deg 110%"
+                                loading="lazy"
+                                draco-decoder-path="https://www.gstatic.com/draco/versioned/decoders/1.4.1/"
+                                performance-mode>
+                            </model-viewer>
+                        </div>
+                        <button class="close-button" style="display:none;">&times;</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-container">
+                <div class="model-container">
+                    <div class="model-title">
+                        Clay3D Model
+                        <button class="expand-button"><i class="fas fa-expand"></i></button>
+                    </div>
+                    <div class="model-content">
+                        <div class="model-viewer-container">
+                            <model-viewer 
+                                src="assets/3D/Clay3D/base_basic_shaded.glb"
+                                camera-controls 
+                                auto-rotate
+                                exposure="0.5" 
+                                shadow-intensity="2" 
+                                camera-orbit="0deg 75deg 110%"
+                                loading="lazy"
+                                draco-decoder-path="https://www.gstatic.com/draco/versioned/decoders/1.4.1/"
+                                performance-mode>
+                            </model-viewer>
+                        </div>
+                        <button class="close-button" style="display:none;">&times;</button>
+                    </div>
+                </div>
+                <div class="model-container">
+                    <div class="model-title">
+                        Craftsman Model
+                        <button class="expand-button"><i class="fas fa-expand"></i></button>
+                    </div>
+                    <div class="model-content">
+                        <div class="model-viewer-container">
+                            <model-viewer 
+                                src="assets/3D/Craftsman/craftsman_best.glb"
+                                camera-controls 
+                                auto-rotate
+                                exposure="0.5" 
+                                shadow-intensity="2" 
+                                camera-orbit="0deg 75deg 110%"
+                                loading="lazy"
+                                draco-decoder-path="https://www.gstatic.com/draco/versioned/decoders/1.4.1/"
+                                performance-mode>
+                            </model-viewer>
+                        </div>
+                        <button class="close-button" style="display:none;">&times;</button>
+                    </div>
+                </div>
+                <div class="model-container">
+                    <div class="model-title">
+                        Trellis Model
+                        <button class="expand-button"><i class="fas fa-expand"></i></button>
+                    </div>
+                    <div class="model-content">
+                        <div class="model-viewer-container">
+                            <model-viewer 
+                                src="assets/3D/Trellis/Trellis1.glb"
+                                camera-controls 
+                                auto-rotate 
+                                exposure="0.5"
+                                shadow-intensity="2" 
+                                camera-orbit="0deg 75deg 110%"
+                                loading="lazy"
+                                draco-decoder-path="https://www.gstatic.com/draco/versioned/decoders/1.4.1/"
+                                performance-mode>
+                            </model-viewer>
+                        </div>
+                        <button class="close-button" style="display:none;">&times;</button>
+                    </div>
+                </div>
+            </div>
+        </section>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Modal Logic for Images
-            const modal = document.getElementById('imageModal');
-            const modalImg = modal.querySelector('img');
-            const closeModal = modal.querySelector('.close');
-            const images = document.querySelectorAll('.model-container img');
+    <footer>
+        <div class="footer-content">
+            <p>© 2024 Alexis Allemand - EPFL Computer Vision Laboratory</p>
+            <p>All rights reserved. Research conducted at École Polytechnique Fédérale de Lausanne</p>
+        </div>
+    </footer>
 
-            images.forEach(img => {
-                img.addEventListener('click', () => {
-                    modalImg.src = img.src;
+    <div class="modal" id="imageModal">
+        <button class="close-button">&times;</button>
+        <div class="modal-content">
+            <img class="modal-image" src="" alt="Enlarged image">
+        </div>
+    </div>
+
+    <div class="overlay"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const modal = document.getElementById('imageModal');
+            const modalImage = document.querySelector('.modal-image');
+            const closeButtons = document.querySelectorAll('.close-button');
+            const zoomableImages = document.querySelectorAll('.zoomable');
+            const overlay = document.querySelector('.overlay');
+            const expandButtons = document.querySelectorAll('.expand-button');
+
+            function openModal(imageSrc) {
+                requestAnimationFrame(() => {
                     modal.classList.add('active');
+                    modalImage.src = imageSrc;
+                    document.body.style.overflow = 'hidden';
+                });
+            }
+
+            function closeModal() {
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+                setTimeout(() => modalImage.src = '', 300);
+            }
+
+            function expandModel(modelContent) {
+                const viewer = modelContent.querySelector('model-viewer');
+                viewer.autoRotate = false;
+                
+                requestAnimationFrame(() => {
+                    modelContent.classList.add('expanded');
+                    overlay.classList.add('active');
+                    modelContent.querySelector('.close-button').style.display = 'flex';
+                    document.body.style.overflow = 'hidden';
+                    
+                    setTimeout(() => {
+                        viewer.autoRotate = true;
+                    }, 300);
+                });
+            }
+
+            function collapseModel(modelContent) {
+                const viewer = modelContent.querySelector('model-viewer');
+                viewer.autoRotate = false;
+                
+                requestAnimationFrame(() => {
+                    modelContent.classList.remove('expanded');
+                    overlay.classList.remove('active');
+                    modelContent.querySelector('.close-button').style.display = 'none';
+                    document.body.style.overflow = '';
+                    
+                    setTimeout(() => {
+                        viewer.autoRotate = true;
+                    }, 300);
+                });
+            }
+
+            zoomableImages.forEach(img => {
+                img.addEventListener('click', () => openModal(img.src), { passive: true });
+            });
+
+            expandButtons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const modelContent = e.target.closest('.model-container').querySelector('.model-content');
+                    if (!modelContent.classList.contains('expanded')) {
+                        expandModel(modelContent);
+                    }
+                }, { passive: true });
+            });
+
+            closeButtons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const modalEl = e.target.closest('.modal');
+                    if (modalEl) {
+                        closeModal();
+                    } else {
+                        const modelContent = e.target.closest('.model-content');
+                        if (modelContent) {
+                            collapseModel(modelContent);
+                        }
+                    }
                 });
             });
 
-            closeModal.addEventListener('click', () => {
-                modal.classList.remove('active');
+            overlay.addEventListener('click', () => {
+                const expandedContent = document.querySelector('.model-content.expanded');
+                if (expandedContent) collapseModel(expandedContent);
             });
 
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) modal.classList.remove('active');
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    if (modal.classList.contains('active')) closeModal();
+                    const expandedContent = document.querySelector('.model-content.expanded');
+                    if (expandedContent) collapseModel(expandedContent);
+                }
             });
+
+            const observerOptions = {
+                root: null,
+                rootMargin: '50px',
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    const viewer = entry.target;
+                    if (entry.isIntersecting) {
+                        if (!viewer.hasAttribute('data-loaded')) {
+                            viewer.dismissPoster();
+                            viewer.setAttribute('data-loaded', 'true');
+                            viewer.style.opacity = '1';
+                        }
+                        
+                        if (!viewer.autoRotate && !viewer.closest('.model-content').classList.contains('expanded')) {
+                            setTimeout(() => {
+                                viewer.autoRotate = true;
+                            }, 100);
+                        }
+                    } else {
+                        if (!viewer.closest('.model-content').classList.contains('expanded')) {
+                            viewer.autoRotate = false;
+                            viewer.style.opacity = '0.6';
+                        }
+                    }
+                });
+            }, observerOptions);
+
+            const modelViewers = document.querySelectorAll('model-viewer');
+            modelViewers.forEach(viewer => {
+                observer.observe(viewer);
+                
+                viewer.addEventListener('load', () => {
+                    viewer.style.opacity = '1';
+                    viewer.dismissPoster();
+                    viewer.removeAttribute('loading');
+                }, { passive: true });
+
+                viewer.addEventListener('error', (error) => {
+                    console.error('Error loading 3D model:', error);
+                    viewer.style.background = '#f8d7da';
+                    viewer.innerHTML = `
+                        <div style="padding: 20px; text-align: center; color: #721c24;">
+                            <p>Error loading 3D model</p>
+                            <p>Please try again later</p>
+                        </div>
+                    `;
+                });
+
+                viewer.style.opacity = '0';
+                viewer.style.transition = 'opacity 0.3s ease-in-out';
+            });
+
+            modalImage.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
         });
     </script>
 </body>
